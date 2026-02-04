@@ -18,22 +18,27 @@ stats = {'SYN': [0, 0, 0],
              'HDR': [0, 0, 0],
              'TDM': [0, 0, 0]}
 
+out = open("largeINDEL.bed", "w")
 
 with open(sys.argv[1], 'r') as fin:
     for line in fin:
         line = line.strip().split('\t')
+        outline = f"{line[0]}\t{line[1]}\t{line[2]}"
         if line[10] == 'SYN':
             stats['SYN'][0] += 1
             stats['SYN'][1] += abs(int(line[1]) - int(line[2])) + 1
             stats['SYN'][2] += abs(int(line[6]) - int(line[7])) + 1
+            svtype = "SYN"
         if line[10] == 'INV':
             stats['INV'][0] += 1
             stats['INV'][1] += abs(int(line[1]) - int(line[2])) + 1
             stats['INV'][2] += abs(int(line[6]) - int(line[7])) + 1
+            svtype = "INV"
         if line[10] in ['TRANS', 'INVTR']:
             stats['TRANS'][0] += 1
             stats['TRANS'][1] += abs(int(line[1]) - int(line[2])) + 1
             stats['TRANS'][2] += abs(int(line[6]) - int(line[7])) + 1
+            svtype = "TRANS"
         ## Discuss DUP length stat
         if line[10] in ['DUP', 'INVDP']:
             if line[11] == 'copygain':
@@ -58,6 +63,8 @@ with open(sys.argv[1], 'r') as fin:
             if length > 50:
                 stats['LargeINS'][0] += 1
                 stats['LargeINS'][2] += abs(int(line[6]) - int(line[7]))
+                outline = f"{line[0]}\t{int(line[1]) - 1}\t{line[2]}\tLargeINS\n"
+                out.write(outline)
             else:
                 stats['SmallINS'][0] += 1
                 stats['SmallINS'][2] += abs(int(line[6]) - int(line[7]))
@@ -66,6 +73,8 @@ with open(sys.argv[1], 'r') as fin:
             if length > 50:
                 stats['LargeDEL'][0] += 1
                 stats['LargeDEL'][1] += abs(int(line[1]) - int(line[2]))
+                outline = f"{line[0]}\t{int(line[1]) - 1}\t{line[2]}\tLargeDEL\n"
+                out.write(outline)
             else:
                 stats['SmallDEL'][0] += 1
                 stats['SmallDEL'][1] += abs(int(line[1]) - int(line[2]))
