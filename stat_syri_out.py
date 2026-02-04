@@ -18,7 +18,7 @@ stats = {'SYN': [0, 0, 0],
              'HDR': [0, 0, 0],
              'TDM': [0, 0, 0]}
 
-out = open("largeINDEL.bed", "w")
+out = open("INDEL.bed", "w")
 
 with open(sys.argv[1], 'r') as fin:
     for line in fin:
@@ -68,6 +68,8 @@ with open(sys.argv[1], 'r') as fin:
             else:
                 stats['SmallINS'][0] += 1
                 stats['SmallINS'][2] += abs(int(line[6]) - int(line[7]))
+                outline = f"{line[0]}\t{int(line[1]) - 1}\t{line[2]}\tSmallINS\n"
+                out.write(outline)
         if line[10] == 'DEL':
             length = abs(int(line[1]) - int(line[2]))
             if length > 50:
@@ -78,6 +80,8 @@ with open(sys.argv[1], 'r') as fin:
             else:
                 stats['SmallDEL'][0] += 1
                 stats['SmallDEL'][1] += abs(int(line[1]) - int(line[2]))
+                outline = f"{line[0]}\t{int(line[1]) - 1}\t{line[2]}\tSmallDEL\n"
+                out.write(outline)
         # Discuss Copychange statistics
         if line[10] == 'CPG':
             stats['CPG'][0] += 1
